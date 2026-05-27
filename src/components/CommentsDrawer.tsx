@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Drawer, Button, Typography } from 'antd'
+import { Drawer, Button } from 'antd'
 import { Undo2 } from 'lucide-react'
 import CommentItem from './CommentItem'
 import type { Comment } from './CommentItem'
@@ -86,7 +86,7 @@ interface CommentsDrawerProps {
   title?: string
 }
 
-export default function CommentsDrawer({ open, onClose, title = 'Actions details' }: CommentsDrawerProps) {
+export default function CommentsDrawer({ open, onClose }: CommentsDrawerProps) {
   const [comments, setComments] = useState<Comment[]>(MOCK_COMMENTS)
   const listEndRef = useRef<HTMLDivElement>(null)
   const prevLengthRef = useRef(MOCK_COMMENTS.length)

@@ -4,7 +4,7 @@ import StarterKit from '@tiptap/starter-kit'
 import UnderlineExt from '@tiptap/extension-underline'
 import ImageExt from '@tiptap/extension-image'
 import Placeholder from '@tiptap/extension-placeholder'
-import { Button, Tooltip, Upload, Tag, Image } from 'antd'
+import { Button, Tooltip, Upload, Image } from 'antd'
 import type { UploadProps } from 'antd'
 import { Paperclip, SendHorizonal, Plus, Bold, Italic, Underline, Strikethrough, List, ListOrdered, Eye, Trash2 } from 'lucide-react'
 
@@ -33,7 +33,7 @@ export default function CommentEditor({ onSubmit }: CommentEditorProps) {
       setEditorEmpty(editor.isEmpty)
     }, []),
     editorProps: {
-      handleKeyDown: (view: unknown, event: KeyboardEvent) => {
+      handleKeyDown: (_view: unknown, event: KeyboardEvent) => {
         if (event.key === 'Enter') {
           const isMeta = event.metaKey || event.ctrlKey
           const inList = editorRef.current?.isActive('bulletList') || editorRef.current?.isActive('orderedList')
