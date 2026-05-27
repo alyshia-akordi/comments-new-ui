@@ -30,6 +30,29 @@
   gap: 16px;
 }
 
+/* ── Comment list scrollbar ────────────────────────────────── */
+.comments-list {
+  scrollbar-width: thin;
+  scrollbar-color: #c4c2d6 transparent;
+}
+
+.comments-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.comments-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.comments-list::-webkit-scrollbar-thumb {
+  background: #c4c2d6;
+  border-radius: 4px;
+}
+
+.comments-list::-webkit-scrollbar-thumb:hover {
+  background: #918FA8;
+}
+
 /* ── Comment item ──────────────────────────────────────────── */
 .comment-item {
   display: flex;
