@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { Avatar, Typography, Button, Space, Modal } from 'antd'
-import { useEditor, EditorContent } from '@tiptap/react'
+import { Avatar, Typography, Button, Space, Modal, Image } from 'antd'
+import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import UnderlineExt from '@tiptap/extension-underline'
-import { Paperclip, Pencil, Trash2, Check, X } from 'lucide-react'
+import { Paperclip, Pencil, Trash2, Check, X, Bold, Italic, Underline, Strikethrough, List, ListOrdered, Download } from 'lucide-react'
 
 export interface Comment {
   id: string
@@ -14,7 +14,7 @@ export interface Comment {
   edited?: boolean
   deleted?: boolean
   contentHtml: string
-  attachments?: { name: string; size: number; url: string }[]
+  attachments?: { name: string; size: number; url: string; type?: string }[]
 }
 
 interface CommentItemProps {
@@ -37,33 +37,110 @@ function EditEditor({ initialHtml, onSave, onCancel, attachments: initialAttachm
   attachments?: Comment['attachments']
 }) {
   const [attachments, setAttachments] = useState(initialAttachments ?? [])
+  const [isDragging, setIsDragging] = useState(false)
 
   const editor = useEditor({
     extensions: [StarterKit, UnderlineExt],
     content: initialHtml,
   })
 
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    Array.from(e.dataTransfer.files).forEach((file) => {
+      setAttachments((prev) => [...prev, {
+        name: file.name,
+        size: file.size,
+        url: URL.createObjectURL(file),
+        type: file.type,
+      }])
+    })
+  }
+
   if (!editor) return null
 
   return (
-    <div className="comment-edit-editor">
-      <EditorContent editor={editor} className="comment-edit-content" />
-      {attachments.length > 0 && (
-        <div className="comment-attachments comment-edit-attachments">
-          {attachments.map((file, i) => (
-            <div key={i} className="comment-attachment-item">
-              <Paperclip size={13} className="comment-attachment-icon" />
-              <span className="comment-attachment-name">{file.name}</span>
-              <button
-                className="comment-attachment-delete-btn"
-                onClick={() => setAttachments((prev) => prev.filter((_, j) => j !== i))}
-              >
-                <Trash2 size={12} />
-              </button>
-            </div>
-          ))}
+    <div
+      className={`comment-edit-editor${isDragging ? ' is-dragging' : ''}`}
+      onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+      onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setIsDragging(false) }}
+      onDrop={handleDrop}
+    >
+      <BubbleMenu editor={editor} tippyOptions={{ duration: 100, placement: 'top' }}>
+        <div className="bubble-menu">
+          <button
+            className={`bubble-btn${editor.isActive('bold') ? ' is-active' : ''}`}
+            onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleBold().run() }}
+          ><Bold size={13} /></button>
+          <button
+            className={`bubble-btn${editor.isActive('italic') ? ' is-active' : ''}`}
+            onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleItalic().run() }}
+          ><Italic size={13} /></button>
+          <button
+            className={`bubble-btn${editor.isActive('underline') ? ' is-active' : ''}`}
+            onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleUnderline().run() }}
+          ><Underline size={13} /></button>
+          <button
+            className={`bubble-btn${editor.isActive('strike') ? ' is-active' : ''}`}
+            onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleStrike().run() }}
+          ><Strikethrough size={13} /></button>
+          <span className="bubble-divider" />
+          <button
+            className={`bubble-btn${editor.isActive('bulletList') ? ' is-active' : ''}`}
+            onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleBulletList().run() }}
+          ><List size={13} /></button>
+          <button
+            className={`bubble-btn${editor.isActive('orderedList') ? ' is-active' : ''}`}
+            onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleOrderedList().run() }}
+          ><ListOrdered size={13} /></button>
         </div>
-      )}
+      </BubbleMenu>
+      <EditorContent editor={editor} className="comment-edit-content" />
+      {attachments.length > 0 && (() => {
+        const images = attachments.filter((f) => f.type?.startsWith('image/'))
+        const files = attachments.filter((f) => !f.type?.startsWith('image/'))
+        return (
+          <div className="comment-edit-attachments">
+            {images.length > 0 && (
+              <div className="image-attachment-grid" style={{ padding: '6px 12px 0' }}>
+                {images.map((file, i) => (
+                  <div key={i} className="image-thumb-wrapper">
+                    <img
+                      src={file.url}
+                      width={72}
+                      height={72}
+                      style={{ objectFit: 'cover', borderRadius: 6, display: 'block', width: 72, height: 72 }}
+                    />
+                    <div className="image-thumb-overlay">
+                      <Trash2
+                        size={14}
+                        className="thumb-action-icon thumb-delete"
+                        onClick={() => setAttachments((prev) => prev.filter((f) => f !== file))}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {files.length > 0 && (
+              <div className="comment-attachments" style={{ padding: '6px 12px 0' }}>
+                {files.map((file, i) => (
+                  <div key={i} className="comment-attachment-item">
+                    <Paperclip size={13} className="comment-attachment-icon" />
+                    <span className="comment-attachment-name">{file.name}</span>
+                    <button
+                      className="comment-attachment-delete-btn"
+                      onClick={() => setAttachments((prev) => prev.filter((_, j) => j !== i))}
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      })()}
       <div className="comment-edit-actions">
         <Button size="small" onClick={onCancel} icon={<X size={12} />}>Cancel</Button>
         <Button
@@ -161,22 +238,48 @@ export default function CommentItem({ comment, onEdit, onDelete, onUndo }: Comme
         ) : (
           <div className="comment-body">
             <div dangerouslySetInnerHTML={{ __html: comment.contentHtml }} />
-            {comment.attachments && comment.attachments.length > 0 && (
-              <div className="comment-attachments">
-                {comment.attachments.map((file, i) => (
-                  <a
-                    key={i}
-                    href={file.url}
-                    download={file.name}
-                    className="comment-attachment-item"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Paperclip size={13} className="comment-attachment-icon" />
-                    <span className="comment-attachment-name">{file.name}</span>
-                  </a>
-                ))}
-              </div>
-            )}
+            {comment.attachments && comment.attachments.length > 0 && (() => {
+              const images = comment.attachments.filter((f) => f.type?.startsWith('image/'))
+              const files = comment.attachments.filter((f) => !f.type?.startsWith('image/'))
+              return (
+                <>
+                  {images.length > 0 && (
+                    <div className="image-attachment-grid" style={{ marginTop: 8 }}>
+                      <Image.PreviewGroup items={images.map((f) => f.url)}>
+                        {images.map((file, i) => (
+                          <Image
+                            key={i}
+                            src={file.url}
+                            width={72}
+                            height={72}
+                            style={{ objectFit: 'cover', borderRadius: 6 }}
+                            preview={{ mask: false }}
+                          />
+                        ))}
+                      </Image.PreviewGroup>
+                    </div>
+                  )}
+                  {files.length > 0 && (
+                    <div className="comment-attachments">
+                      {files.map((file, i) => (
+                        <div key={i} className="comment-attachment-item">
+                          <Paperclip size={13} className="comment-attachment-icon" />
+                          <span className="comment-attachment-name">{file.name}</span>
+                          <a
+                            href={file.url}
+                            download={file.name}
+                            className="comment-attachment-download"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Download size={13} />
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )
+            })()}
           </div>
         )}
       </div>}
