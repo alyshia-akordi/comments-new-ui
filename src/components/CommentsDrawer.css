@@ -172,6 +172,14 @@
   flex-shrink: 0;
 }
 
+/* ── Text selection highlight ──────────────────────────────── */
+.comment-body ::selection,
+.comment-edit-content ::selection,
+.comment-editor-content ::selection {
+  background: rgba(124, 111, 205, 0.2);
+  color: inherit;
+}
+
 /* ── Bubble menu ───────────────────────────────────────────── */
 .bubble-menu {
   display: flex;
