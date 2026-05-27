@@ -30,6 +30,10 @@ const MOCK_COMMENTS: Comment[] = [
     isYou: false,
     timestamp: '58 mins ago',
     contentHtml: "<p>It shouldn't affect milestone 2, but milestone 3 will likely shift. I'll update the project plan once Tim confirms. In the meantime, can you hold off on sending the final deliverables?</p>",
+    attachments: [
+      { name: 'project-timeline.png', size: 204800, url: 'https://picsum.photos/seed/timeline/600/400', type: 'image/png' },
+      { name: 'milestone-overview.png', size: 184320, url: 'https://picsum.photos/seed/milestone/600/400', type: 'image/png' },
+    ],
   },
   {
     id: '4',
