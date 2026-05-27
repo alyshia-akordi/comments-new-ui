@@ -31,8 +31,8 @@ const MOCK_COMMENTS: Comment[] = [
     timestamp: '58 mins ago',
     contentHtml: "<p>It shouldn't affect milestone 2, but milestone 3 will likely shift. I'll update the project plan once Tim confirms. In the meantime, can you hold off on sending the final deliverables?</p>",
     attachments: [
-      { name: 'project-timeline.png', size: 204800, url: 'https://picsum.photos/seed/timeline/600/400', type: 'image/png' },
-      { name: 'milestone-overview.png', size: 184320, url: 'https://picsum.photos/seed/milestone/600/400', type: 'image/png' },
+      { name: 'qvb.jpeg', size: 204800, url: '/qvb.jpeg', type: 'image/jpeg' },
+      { name: 'opera-house.jpeg', size: 184320, url: '/opera-house.jpeg', type: 'image/jpeg' },
     ],
   },
   {
@@ -43,6 +43,7 @@ const MOCK_COMMENTS: Comment[] = [
     timestamp: '45 mins ago',
     contentHtml: '<p>Sure, will hold. Also flagging that the supplementary design assets are ready on our side — happy to share them early if it helps the client prep.</p>',
     attachments: [
+      { name: 'crown-sydney.jpg', size: 312400, url: '/crown-sydney.jpg', type: 'image/jpeg' },
       { name: 'GI-Scope-Design-Assets-v3.fig', size: 8342016, url: '#' },
       { name: 'Brand-Guidelines-2024.pdf', size: 2097152, url: '#' },
     ],
