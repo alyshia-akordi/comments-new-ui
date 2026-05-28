@@ -83,6 +83,25 @@ const MOCK_COMMENTS: Comment[] = [
     timestamp: '5 mins ago',
     contentHtml: "<p>On it. I'll have a look now and send through a corrected version by EOD.</p>",
   },
+  {
+    id: '9',
+    author: 'Olivia Rhye',
+    initials: 'OR',
+    isYou: false,
+    timestamp: 'just now',
+    contentHtml: `<p>Following up on the geotechnical risk discussion from last week's design team meeting. I've now had a chance to review both the Phase 1 report and Marcus's updated scope document in detail, and I want to make sure we're all aligned before the variation instruction goes out.</p><p>Key concerns I'd like addressed before sign-off:</p><ul><li>The CPT spacing of 200m assumes relatively uniform geology between the flagged boreholes — but the Phase 1 borehole logs at BH-07 and BH-09 show a significant change in stratigraphy over less than 50m. I'd recommend reducing CPT spacing to 100m between chainage 1+400 and 1+750 specifically, even if we keep 200m elsewhere. The cost difference is marginal compared to the exposure if we miss something.</li><li>The lab testing scope doesn't currently include consolidation testing. Given the potential for settlement in the soft alluvial zone identified at BH-11, I think oedometer tests should be added for samples recovered from that zone. Worth confirming with the geotechnical lead whether this is captured elsewhere or genuinely missing.</li><li>The 6-week reporting timeline assumes continuous site access, but the contractor has flagged a 3-day shutdown window in week 4 for an unrelated utility diversion. This needs to be factored into the GI programme or we risk a late report landing after the (now extended) design freeze.</li></ul><p>Actions I'm tracking from this thread:</p><ul><li>Marcus to update CPT spacing in the scope doc to reflect 100m intervals in the flagged zone</li><li>Marcus to confirm with the geotech lead whether consolidation testing is required and update the lab suite accordingly</li><li>Priya to flag the week 4 shutdown to the GI contractor and get a revised programme before the scope doc is issued</li><li>Jordan to update the risk register once the revised scope is confirmed — current EMV estimate may need to be revisited if the additional testing changes the likelihood rating</li></ul><p>Happy to jump on a call if it's easier to work through the technical items live rather than in comments.</p>`,
+    attachments: [
+      { name: 'qvb.jpeg', size: 204800, url: '/qvb.jpeg', type: 'image/jpeg' },
+      { name: 'crown-sydney.jpg', size: 312400, url: '/crown-sydney.jpg', type: 'image/jpeg' },
+      { name: 'opera-house.jpeg', size: 184320, url: '/opera-house.jpeg', type: 'image/jpeg' },
+      { name: 'Phase-1-Geotechnical-Report.pdf', size: 4718592, url: '#' },
+      { name: 'GI-Scope-Document-v4.docx', size: 1048576, url: '#' },
+      { name: 'CPT-Spacing-Analysis.xlsx', size: 720896, url: '#' },
+      { name: 'BH-07-BH-09-Borehole-Logs.pdf', size: 3145728, url: '#' },
+      { name: 'Risk-Register-EMV-Update.xlsx', size: 638976, url: '#' },
+      { name: 'GI-Programme-Revised.mpp', size: 512000, url: '#' },
+    ],
+  },
 ]
 
 interface CommentsDrawerProps {
