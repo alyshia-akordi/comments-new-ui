@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Avatar, Typography, Button, Space, Modal, Image } from 'antd'
 import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -152,6 +152,85 @@ function EditEditor({ initialHtml, onSave, onCancel, attachments: initialAttachm
   )
 }
 
+const FILES_VISIBLE = 3
+
+function CommentBody({ comment }: { comment: Comment }) {
+  const [textExpanded, setTextExpanded] = useState(false)
+  const [filesExpanded, setFilesExpanded] = useState(false)
+  const [isOverflowing, setIsOverflowing] = useState(false)
+  const textRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (textRef.current) {
+      setIsOverflowing(textRef.current.scrollHeight > 182)
+    }
+  }, [comment.contentHtml])
+
+  const images = comment.attachments?.filter((f) => f.type?.startsWith('image/')) ?? []
+  const files = comment.attachments?.filter((f) => !f.type?.startsWith('image/')) ?? []
+  const visibleFiles = filesExpanded ? files : files.slice(0, FILES_VISIBLE)
+  const hiddenCount = files.length - FILES_VISIBLE
+
+  return (
+    <div className="comment-body">
+      <div
+        ref={textRef}
+        className={`comment-body-text${textExpanded ? ' expanded' : ''}`}
+        dangerouslySetInnerHTML={{ __html: comment.contentHtml }}
+      />
+      {isOverflowing && (
+        <button className="comment-show-more" onClick={() => setTextExpanded((v) => !v)}>
+          {textExpanded ? 'Show less' : 'Show more'}
+        </button>
+      )}
+      {images.length > 0 && (
+        <div className="image-attachment-grid" style={{ marginTop: 8 }}>
+          <Image.PreviewGroup items={images.map((f) => f.url)}>
+            {images.map((file, i) => (
+              <Image
+                key={i}
+                src={file.url}
+                width={72}
+                height={72}
+                style={{ objectFit: 'cover', borderRadius: 6 }}
+                preview={{ mask: false }}
+              />
+            ))}
+          </Image.PreviewGroup>
+        </div>
+      )}
+      {files.length > 0 && (
+        <div className="comment-attachments">
+          {visibleFiles.map((file, i) => (
+            <div key={i} className="comment-attachment-item">
+              <Paperclip size={13} className="comment-attachment-icon" />
+              <span className="comment-attachment-name">{file.name}</span>
+              <a
+                href={file.url}
+                download={file.name}
+                className="comment-attachment-download"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Download size={13} />
+              </a>
+            </div>
+          ))}
+          {!filesExpanded && hiddenCount > 0 && (
+            <button className="comment-show-more" onClick={() => setFilesExpanded(true)}>
+              +{hiddenCount} more file{hiddenCount > 1 ? 's' : ''}
+            </button>
+          )}
+          {filesExpanded && files.length > FILES_VISIBLE && (
+            <button className="comment-show-more" onClick={() => setFilesExpanded(false)}>
+              Show less
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function CommentItem({ comment, onEdit, onDelete, onUndo }: CommentItemProps) {
   const [editing, setEditing] = useState(false)
 
@@ -231,51 +310,7 @@ export default function CommentItem({ comment, onEdit, onDelete, onUndo }: Comme
             onCancel={() => setEditing(false)}
           />
         ) : (
-          <div className="comment-body">
-            <div dangerouslySetInnerHTML={{ __html: comment.contentHtml }} />
-            {comment.attachments && comment.attachments.length > 0 && (() => {
-              const images = comment.attachments.filter((f) => f.type?.startsWith('image/'))
-              const files = comment.attachments.filter((f) => !f.type?.startsWith('image/'))
-              return (
-                <>
-                  {images.length > 0 && (
-                    <div className="image-attachment-grid" style={{ marginTop: 8 }}>
-                      <Image.PreviewGroup items={images.map((f) => f.url)}>
-                        {images.map((file, i) => (
-                          <Image
-                            key={i}
-                            src={file.url}
-                            width={72}
-                            height={72}
-                            style={{ objectFit: 'cover', borderRadius: 6 }}
-                            preview={{ mask: false }}
-                          />
-                        ))}
-                      </Image.PreviewGroup>
-                    </div>
-                  )}
-                  {files.length > 0 && (
-                    <div className="comment-attachments">
-                      {files.map((file, i) => (
-                        <div key={i} className="comment-attachment-item">
-                          <Paperclip size={13} className="comment-attachment-icon" />
-                          <span className="comment-attachment-name">{file.name}</span>
-                          <a
-                            href={file.url}
-                            download={file.name}
-                            className="comment-attachment-download"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Download size={13} />
-                          </a>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )
-            })()}
-          </div>
+          <CommentBody comment={comment} />
         )}
       </div>}
     </div>
