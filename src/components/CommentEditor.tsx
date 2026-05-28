@@ -122,7 +122,9 @@ export default function CommentEditor({ onSubmit }: CommentEditorProps) {
           </Upload>
         </Tooltip>
 
-        <EditorContent editor={editor} className="comment-editor-content" />
+        <div className="comment-editor-scroll-area">
+          <EditorContent editor={editor} className="comment-editor-content" />
+        </div>
 
         <Button
           type="text"

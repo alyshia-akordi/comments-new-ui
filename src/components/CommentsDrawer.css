@@ -325,26 +325,31 @@
   gap: 6px;
   padding: 4px 8px 4px 10px;
   min-height: 56px;
+}
+
+.comment-editor-scroll-area {
+  flex: 1;
+  min-width: 0;
   max-height: 200px;
   overflow-y: scroll;
   scrollbar-width: thin;
   scrollbar-color: #c4c2d6 transparent;
 }
 
-.comment-editor-body::-webkit-scrollbar {
+.comment-editor-scroll-area::-webkit-scrollbar {
   width: 4px;
 }
 
-.comment-editor-body::-webkit-scrollbar-track {
+.comment-editor-scroll-area::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.comment-editor-body::-webkit-scrollbar-thumb {
+.comment-editor-scroll-area::-webkit-scrollbar-thumb {
   background: #c4c2d6;
   border-radius: 4px;
 }
 
-.comment-editor-body::-webkit-scrollbar-thumb:hover {
+.comment-editor-scroll-area::-webkit-scrollbar-thumb:hover {
   background: #918FA8;
 }
 
@@ -380,8 +385,6 @@
 }
 
 .comment-editor-content {
-  flex: 1;
-  min-width: 0;
   padding-top: 6px;
   padding-bottom: 6px;
 }
