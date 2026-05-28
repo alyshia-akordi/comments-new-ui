@@ -116,24 +116,26 @@ export default function CommentEditor({ onSubmit }: CommentEditorProps) {
       </BubbleMenu>
 
       <div className="comment-editor-body">
-        <Tooltip title="Attach file" mouseEnterDelay={0.5}>
-          <Upload beforeUpload={handleFileAttach} showUploadList={false} multiple>
-            <Button type="text" size="small" icon={<Plus size={16} />} className="editor-attach-btn" />
-          </Upload>
-        </Tooltip>
-
-        <div className="comment-editor-scroll-area">
-          <EditorContent editor={editor} className="comment-editor-content" />
+        <div className="editor-attach-btn-anchor">
+          <Tooltip title="Attach file" mouseEnterDelay={0.5}>
+            <Upload beforeUpload={handleFileAttach} showUploadList={false} multiple>
+              <Button type="text" size="small" icon={<Plus size={16} />} className="editor-attach-btn" />
+            </Upload>
+          </Tooltip>
         </div>
 
-        <Button
-          type="text"
-          size="small"
-          icon={<SendHorizonal size={14} />}
-          disabled={isEmpty}
-          onClick={handleSubmit}
-          className={`editor-send-btn${isEmpty ? '' : ' active'}`}
-        />
+        <EditorContent editor={editor} className="comment-editor-content" />
+
+        <div className="editor-send-btn-anchor">
+          <Button
+            type="text"
+            size="small"
+            icon={<SendHorizonal size={14} />}
+            disabled={isEmpty}
+            onClick={handleSubmit}
+            className={`editor-send-btn${isEmpty ? '' : ' active'}`}
+          />
+        </div>
       </div>
 
       {attachments.length > 0 && (
