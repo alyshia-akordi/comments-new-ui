@@ -9,10 +9,11 @@ import type { UploadProps } from 'antd'
 import { Paperclip, SendHorizonal, Plus, Bold, Italic, Underline, Strikethrough, List, ListOrdered, Eye, Trash2 } from 'lucide-react'
 
 interface CommentEditorProps {
-  onSubmit: (html: string, attachments: File[]) => void
+  onSubmit: (html: string, attachments: File[]) => Promise<void>
+  sending?: boolean
 }
 
-export default function CommentEditor({ onSubmit }: CommentEditorProps) {
+export default function CommentEditor({ onSubmit, sending = false }: CommentEditorProps) {
   const [attachments, setAttachments] = useState<File[]>([])
   const [editorEmpty, setEditorEmpty] = useState(true)
   const [isDragging, setIsDragging] = useState(false)
@@ -53,11 +54,15 @@ export default function CommentEditor({ onSubmit }: CommentEditorProps) {
 
   const isEmpty = editorEmpty && attachments.length === 0
 
-  const handleSubmit = () => {
-    if (isEmpty) return
-    onSubmit(editor.getHTML(), attachments)
-    editor.commands.clearContent()
-    setAttachments([])
+  const handleSubmit = async () => {
+    if (isEmpty || sending) return
+    try {
+      await onSubmit(editor.getHTML(), attachments)
+      editor.commands.clearContent()
+      setAttachments([])
+    } catch {
+      // keep content so user can retry
+    }
   }
 
   submitRef.current = handleSubmit
@@ -131,9 +136,10 @@ export default function CommentEditor({ onSubmit }: CommentEditorProps) {
             type="text"
             size="small"
             icon={<SendHorizonal size={14} />}
-            disabled={isEmpty}
+            disabled={isEmpty || sending}
+            loading={sending}
             onClick={handleSubmit}
-            className={`editor-send-btn${isEmpty ? '' : ' active'}`}
+            className={`editor-send-btn${isEmpty || sending ? '' : ' active'}`}
           />
         </div>
       </div>

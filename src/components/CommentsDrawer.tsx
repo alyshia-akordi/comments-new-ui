@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Drawer, Button } from 'antd'
+import { Drawer, Button, Alert } from 'antd'
 import { Undo2 } from 'lucide-react'
 import CommentItem from './CommentItem'
 import type { Comment } from './CommentItem'
@@ -112,6 +112,8 @@ interface CommentsDrawerProps {
 
 export default function CommentsDrawer({ open, onClose }: CommentsDrawerProps) {
   const [comments, setComments] = useState<Comment[]>(MOCK_COMMENTS)
+  const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState<string | null>(null)
   const listEndRef = useRef<HTMLDivElement>(null)
   const prevLengthRef = useRef(MOCK_COMMENTS.length)
 
@@ -140,7 +142,16 @@ export default function CommentsDrawer({ open, onClose }: CommentsDrawerProps) {
     setComments((prev) => prev.map((c) => c.id === id ? { ...c, deleted: false } : c))
   }
 
-  const handleSubmit = (html: string, files: File[]) => {
+  const handleSubmit = async (html: string, files: File[]) => {
+    setSending(true)
+    setSendError(null)
+    await new Promise((resolve) => setTimeout(resolve, 800))
+    const failed = Math.random() < 0.4
+    setSending(false)
+    if (failed) {
+      setSendError('Your message failed to send. Please try again.')
+      throw new Error('send_failed')
+    }
     const newComment: Comment = {
       id: Date.now().toString(),
       author: 'Alyshia Ho',
@@ -191,7 +202,16 @@ export default function CommentsDrawer({ open, onClose }: CommentsDrawerProps) {
 
         {/* Editor */}
         <div className="comments-editor-footer">
-          <CommentEditor onSubmit={handleSubmit} />
+          {sendError && (
+            <Alert
+              type="error"
+              message={sendError}
+              closable
+              onClose={() => setSendError(null)}
+              style={{ marginBottom: 10, borderRadius: 8, fontSize: 13 }}
+            />
+          )}
+          <CommentEditor onSubmit={handleSubmit} sending={sending} />
         </div>
       </div>
     </Drawer>
